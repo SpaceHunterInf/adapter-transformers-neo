@@ -355,6 +355,18 @@ class ModelAdaptersMixin(PushAdapterToHubMixin, ABC):
         self.set_active_adapters(adapter_setup)
         # TODO implement fusion for invertible adapters
 
+    def freeze_fusion_subordinate_adapter(self, adapter_name):
+        # print('HERERHER')
+        # print(self.base_model.shared_parameters.keys())
+        # print(len(self.base_model.shared_parameters))
+        #print(self.base_model.state_dict().keys())
+        # print(self.base_model.named_parameters())
+        #print(self.afk)
+        for name, param in self.base_model.named_parameters():
+            if adapter_name in name and (not 'fusion' in name):
+                param.requires_grad = False
+                #print('Freezed layer ' + name)
+
     def has_adapters(self):
         if not getattr(self.config, "is_adaptable", None):
             return False
